@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: #f3e8ee;
+      color: #5c4b51;
+      min-height: 100vh;
+      padding: 2rem;
+      background-image: 
+        radial-gradient(#e4b7d566 1px, transparent 1px),
+        radial-gradient(#e4b7d566 1px, transparent 1px);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+    }
+
+    .app-container {
+      background: #fff9fb;
+      padding: 2rem;
+      border-radius: 24px;
+      box-shadow: 
+        0 8px 32px rgba(92, 75, 81, 0.1),
+        0 2px 4px rgba(92, 75, 81, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-width: 800px;
+      width: 100%;
+      border: 1px solid #f0e4eb;
+    }
+
+    .title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #845B6C;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      font-family: 'Segoe UI', cursive;
+      letter-spacing: 0.5px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #9c7b8a;
+      font-size: 0.9rem;
+      margin-top: -1rem;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #f0e4eb;
+    }
+
+    .tool-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: #fdf6f9;
+      border-radius: 12px;
+      border: 1px solid #f5e6ee;
+    }
+
+    .tool-group label {
+      font-size: 0.9rem;
+      color: #845B6C;
+      font-weight: 500;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1px;
+      background: #e4b7d5;
+      padding: 1px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 
+        0 4px 16px rgba(92, 75, 81, 0.1),
+        0 1px 2px rgba(92, 75, 81, 0.05);
+      align-self: center;
+    }
+
+    .pixel {
+      width: 24px;
+      height: 24px;
+      background: #ffffff;
+      transition: all 0.2s ease;
+    }
+
+    .pixel:hover {
+      opacity: 0.8;
+      transform: scale(1.1);
+    }
+
+    button {
+      padding: 0.75rem 1.25rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #ffffff;
+      backdrop-filter: blur(4px);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(92, 75, 81, 0.15);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button.active {
+      transform: translateY(1px);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    button.tool {
+      background: #b392ac;
+    }
+
+    button.eraser {
+      background: #c7a9bc;
+    }
+
+    button.clear {
+      background: #9c7b8a;
+    }
+
+    input[type="color"] {
+      width: 48px;
+      height: 48px;
+      border: none;
+      border-radius: 12px;
+      background: none;
+      cursor: pointer;
+      padding: 2px;
+    }
+
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    input[type="color"]::-webkit-color-swatch {
+      border: 3px solid #f5e6ee;
+      border-radius: 10px;
+    }
+
+    select {
+      padding: 0.75rem;
+      border-radius: 12px;
+      border: 2px solid #f5e6ee;
+      background: #ffffff;
+      color: #845B6C;
+      font-size: 0.9rem;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    select:hover {
+      border-color: #e4b7d5;
+    }
+
+    select:focus {
+      border-color: #b392ac;
+      box-shadow: 0 0 0 3px #f5e6ee;
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .palette-dots {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      top: -20px;
+      right: -20px;
+      opacity: 0.1;
+      pointer-events: none;
+      background-image: radial-gradient(#845B6C 20%, transparent 20%),
+                        radial-gradient(#845B6C 20%, transparent 20%);
+      background-position: 0 0, 8px 8px;
+      background-size: 16px 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="palette-dots"></div>
+    <div class="title">✨ Pixel Canvas Studio ✨</div>
+    <div class="subtitle">Create your masterpiece, one pixel at a time</div>
+    <div class="controls">
+      <div class="tool-group">
+        <input type="color" id="colorPicker" value="#b392ac" title="Color Picker">
+        <button id="brushTool" class="tool active" onclick="setTool('brush')">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M18.5 2.5c1 1 1 2.6 0 3.5l-1.5 1.5-3.5-3.5 1.5-1.5c1-1 2.6-1 3.5 0z"/>
+            <path d="M12 6l3.5 3.5L6 19h-3.5v-3.5L12 6z"/>
+          </svg>
+          Brush
+        </button>
+        <button id="eraserTool" class="eraser" onclick="setTool('eraser')">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M19 19H7L3 15l7.5-7.5L19 16l-4 3h4v-3"/>
+            <path d="M14 10l-2-2"/>
+          </svg>
+          Eraser
+        </button>
+      </div>
+      <div class="tool-group">
+        <label for="brushSize">Brush Size</label>
+        <select id="brushSize">
+          <option value="1">Small</option>
+          <option value="2">Medium</option>
+          <option value="3">Large</option>
+          <option value="4">Extra Large</option>
+        </select>
+      </div>
+      <button class="clear" onclick="clearCanvas()">
+        <svg class="icon" viewBox="0 0 24 24">
+          <path d="M4 7h16"/>
+          <path d="M10 11v6"/>
+          <path d="M14 11v6"/>
+          <path d="M5 7l1 12h12l1-12"/>
+          <path d="M9 7V4h6v3"/>
+        </svg>
+        Clear Canvas
+      </button>
+    </div>
+    <div id="canvas" class="grid"></div>
+  </div>
+
+  <script>
+    const GRID_SIZE = 16;
+    let isDrawing = false;
+    let currentColor = '#b392ac';
+    let currentTool = 'brush';
+    let brushSize = 1;
+
+    // Create the pixel grid
+    const canvas = document.getElementById('canvas');
+    canvas.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 24px)`;
+
+    // Create grid pixels and store them in a 2D array
+    const pixels = [];
+    for (let y = 0; y < GRID_SIZE; y++) {
+      pixels[y] = [];
+      for (let x = 0; x < GRID_SIZE; x++) {
+        const pixel = document.createElement('div');
+        pixel.className = 'pixel';
+        pixel.dataset.x = x;
+        pixel.dataset.y = y;
+        
+        pixel.addEventListener('mousedown', startDrawing);
+        pixel.addEventListener('mouseover', draw);
+        pixel.addEventListener('mouseup', stopDrawing);
+        
+        canvas.appendChild(pixel);
+        pixels[y][x] = pixel;
+      }
+    }
+
+    function setTool(tool) {
+      currentTool = tool;
+      document.getElementById('brushTool').classList.toggle('active', tool === 'brush');
+      document.getElementById('eraserTool').classList.toggle('active', tool === 'eraser');
+    }
+
+    const colorPicker = document.getElementById('colorPicker');
+    colorPicker.addEventListener('input', (e) => {
+      currentColor = e.target.value;
+      if (currentTool === 'eraser') {
+        setTool('brush');
+      }
+    });
+
+    const brushSizeSelect = document.getElementById('brushSize');
+    brushSizeSelect.addEventListener('change', (e) => {
+      brushSize = parseInt(e.target.value);
+    });
+
+    function startDrawing(e) {
+      isDrawing = true;
+      draw(e);
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+
+      const x = parseInt(e.target.dataset.x);
+      const y = parseInt(e.target.dataset.y);
+      const color = currentTool === 'eraser' ? 'white' : currentColor;
+
+      for (let dy = 0; dy < brushSize; dy++) {
+        for (let dx = 0; dx < brushSize; dx++) {
+          const newX = x + dx;
+          const newY = y + dy;
+          
+          if (newX < GRID_SIZE && newY < GRID_SIZE) {
+            pixels[newY][newX].style.backgroundColor = color;
+          }
+        }
+      }
+    }
+
+    function stopDrawing() {
+      isDrawing = false;
+    }
+
+    function clearCanvas() {
+      document.querySelectorAll('.pixel').forEach(pixel => {
+        pixel.style.backgroundColor = 'white';
+      });
+    }
+
+    canvas.addEventListener('mouseleave', stopDrawing);
+    document.addEventListener('dragstart', (e) => e.preventDefault());
+  </script>
+</body>
+</html>
