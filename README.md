@@ -6,5 +6,9 @@ Features-
 
 2.Brush Size can be increased 
 
-3.Simple UI ti navigate through
+3.Simple UI to navigate through
+
+Disclaimer-
+
+I have made all the code by myself but I took refrences and inspiration from Pintrest and I also took help of ai in some part of the code
 
